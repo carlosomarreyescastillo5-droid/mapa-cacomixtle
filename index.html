@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mapa Interactivo - Ruta al Mercado</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html { width: 100%; height: 100%; font-family: sans-serif; overflow: hidden; }
+    #map { width: 100%; height: 100vh; }
+
+    /* Estilos para que los iconos se vean circulares con marco blanco */
+    .leaflet-marker-icon.custom-icon {
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+      object-fit: cover;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet Routing Machine JS -->
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+  <script>
+    // 1. Coordenadas Mercado Santo Domingo Las Rosas
+    const mercadoCoords = [19.3242, -99.1608];
+
+    // 2. Coordenadas iniciales para el Cacomixtle
+    let userCoords = [19.3310, -99.1620]; 
+
+    // 3. Inicializar Mapa
+    const map = L.map('map').setView(mercadoCoords, 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // --- ENLACES DIRECTOS REALES DE IMGBB ---
+    const urlMercado = 'https://i.ibb.co/BVQkk5FQ/mercado-de-las-roas.jpg';
+    const urlCacomixtle = 'https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png';
+
+    // Icono del Cacomixtle
+    const cacomixtleIcon = L.icon({
+      iconUrl: urlCacomixtle,
+      iconSize: [60, 60],
+      iconAnchor: [30, 30],
+      popupAnchor: [0, -30],
+      className: 'custom-icon'
+    });
+
+    // Icono del Mercado
+    const mercadoIcon = L.icon({
+      iconUrl: urlMercado,
+      iconSize: [60, 60],
+      iconAnchor: [30, 30],
+      popupAnchor: [0, -30],
+      className: 'custom-icon'
+    });
+
+    let routingControl = null;
+
+    // Marcador Mercado
+    const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
+    mercadoMarker.bindPopup('<b>Mercado Santo Domingo Las Rosas</b><br>¡Haz clic para trazar la ruta!');
+
+    mercadoMarker.on('click', function () {
+      trazarRuta(userCoords, mercadoCoords);
+    });
+
+    // Marcador Cacomixtle
+    let userMarker = L.marker(userCoords, { icon: cacomixtleIcon }).addTo(map);
+    userMarker.bindPopup('<b>¡Aquí estás tú! (Cacomixtle)</b>');
+
+    // Intentar geolocalizar en tiempo real
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          userCoords = [position.coords.latitude, position.coords.longitude];
+          userMarker.setLatLng(userCoords);
+          map.setView(userCoords, 15);
+        },
+        function (error) {
+          console.warn("Geolocalización desactivada, usando posición por defecto.");
+        }
+      );
+    }
+
+    // Trazar ruta
+    function trazarRuta(origen, destino) {
+      if (routingControl !== null) {
+        map.removeControl(routingControl);
+      }
+
+      routingControl = L.Routing.control({
+        waypoints: [
+          L.latLng(origen[0], origen[1]),
+          L.latLng(destino[0], destino[1])
+        ],
+        router: L.Routing.osrmv1({ profile: 'foot' }),
+        lineOptions: {
+          styles: [{ color: '#E91E63', opacity: 0.9, weight: 7 }]
+        },
+        createMarker: function() { return null; },
+        addWaypoints: false,
+        draggableWaypoints: false,
+        fitSelectedRoutes: true
+      }).addTo(map);
+    }
+  </script>
+</body>
+</html>
