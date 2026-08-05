@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mapa Interactivo - Ruta al Mercado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Mapa Interactivo - Cacomixtle en vivo</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -15,13 +15,14 @@
     body, html { width: 100%; height: 100%; font-family: sans-serif; overflow: hidden; }
     #map { width: 100%; height: 100vh; }
 
-    /* Estilos para que los iconos se vean circulares con marco blanco */
+    /* Estilos para los marcadores */
     .leaflet-marker-icon.custom-icon {
       border-radius: 50%;
       border: 3px solid #ffffff;
       box-shadow: 0 3px 8px rgba(0,0,0,0.4);
       object-fit: cover;
       background-color: #ffffff;
+      transition: all 0.3s ease; /* Transición suave cuando el personaje avanza */
     }
   </style>
 </head>
@@ -35,25 +36,25 @@
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
   <script>
-    // 1. Coordenadas Mercado Santo Domingo Las Rosas
+    // 1. Coordenadas del Mercado Santo Domingo Las Rosas
     const mercadoCoords = [19.3242, -99.1608];
 
-    // 2. Coordenadas iniciales para el Cacomixtle
+    // 2. Coordenadas por defecto (se reemplazan de inmediato con tu GPS)
     let userCoords = [19.3310, -99.1620]; 
+    let primerCentrado = false;
 
-    // 3. Inicializar Mapa
-    const map = L.map('map').setView(mercadoCoords, 15);
+    // 3. Inicializar el Mapa
+    const map = L.map('map').setView(mercadoCoords, 16);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // --- ENLACES DIRECTOS REALES DE IMGBB ---
+    // --- ENLACES DIRECTOS DE IMGBB ---
     const urlMercado = 'https://i.ibb.co/BVQkk5FQ/mercado-de-las-roas.jpg';
     const urlCacomixtle = 'https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png';
 
-    // Icono del Cacomixtle
     const cacomixtleIcon = L.icon({
       iconUrl: urlCacomixtle,
       iconSize: [60, 60],
@@ -62,7 +63,6 @@
       className: 'custom-icon'
     });
 
-    // Icono del Mercado
     const mercadoIcon = L.icon({
       iconUrl: urlMercado,
       iconSize: [60, 60],
@@ -73,7 +73,7 @@
 
     let routingControl = null;
 
-    // Marcador Mercado
+    // Marcador del Mercado
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
     mercadoMarker.bindPopup('<b>Mercado Santo Domingo Las Rosas</b><br>¡Haz clic para trazar la ruta!');
 
@@ -81,25 +81,42 @@
       trazarRuta(userCoords, mercadoCoords);
     });
 
-    // Marcador Cacomixtle
+    // Marcador del Cacomixtle
     let userMarker = L.marker(userCoords, { icon: cacomixtleIcon }).addTo(map);
     userMarker.bindPopup('<b>¡Aquí estás tú! (Cacomixtle)</b>');
 
-    // Intentar geolocalizar en tiempo real
+    // 4. RASTREO EN TIEMPO REAL (Rastrea cada paso al caminar)
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
+      navigator.geolocation.watchPosition(
         function (position) {
           userCoords = [position.coords.latitude, position.coords.longitude];
+          
+          // Mueve al Cacomixtle suavemente a la nueva posición del GPS
           userMarker.setLatLng(userCoords);
-          map.setView(userCoords, 15);
+
+          // Centra la pantalla en el usuario la primera vez que abre la app
+          if (!primerCentrado) {
+            map.setView(userCoords, 17);
+            primerCentrado = true;
+          }
+
+          // Si ya hay una ruta trazada, la recalculamos en vivo desde la nueva posición
+          if (routingControl !== null) {
+            trazarRuta(userCoords, mercadoCoords);
+          }
         },
         function (error) {
-          console.warn("Geolocalización desactivada, usando posición por defecto.");
+          console.warn("Asegúrate de activar el GPS/Ubicación de tu celular.");
+        },
+        {
+          enableHighAccuracy: true, // Fuerza el uso del GPS de alta precisión del teléfono
+          maximumAge: 1000,         // Actualiza lecturas de hace máximo 1 segundo
+          timeout: 10000
         }
       );
     }
 
-    // Trazar ruta
+    // 5. Función de Trazado de Ruta
     function trazarRuta(origen, destino) {
       if (routingControl !== null) {
         map.removeControl(routingControl);
@@ -110,14 +127,14 @@
           L.latLng(origen[0], origen[1]),
           L.latLng(destino[0], destino[1])
         ],
-        router: L.Routing.osrmv1({ profile: 'foot' }),
+        router: L.Routing.osrmv1({ profile: 'foot' }), // Ruta a pie
         lineOptions: {
           styles: [{ color: '#E91E63', opacity: 0.9, weight: 7 }]
         },
-        createMarker: function() { return null; },
+        createMarker: function() { return null; }, // Conserva nuestros marcadores personalizados
         addWaypoints: false,
         draggableWaypoints: false,
-        fitSelectedRoutes: true
+        fitSelectedRoutes: false // Evita que la cámara se aleje brusca al recalcular
       }).addTo(map);
     }
   </script>
