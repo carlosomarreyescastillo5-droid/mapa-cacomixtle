@@ -27,7 +27,7 @@
       cursor: pointer;
     }
 
-    /* --- ESTILOS PARA LA VENTANA MODAL GRANDE DE LA IMAGEN --- */
+    /* Estilos para la ventana modal emergente */
     .modal-imagen {
       display: none;
       position: fixed;
@@ -41,14 +41,44 @@
       justify-content: center;
       flex-direction: column;
       padding: 20px;
+      overflow-y: auto;
     }
 
     .modal-contenido {
       max-width: 90%;
-      max-height: 70vh;
+      max-height: 50vh;
       border-radius: 12px;
       box-shadow: 0 5px 25px rgba(0,0,0,0.5);
       object-fit: contain;
+    }
+
+    .modal-info {
+      color: white;
+      text-align: center;
+      margin-top: 15px;
+      max-width: 90%;
+    }
+
+    .modal-info h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #FFD54F;
+    }
+
+    .modal-info p {
+      font-size: 14px;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      color: #E0E0E0;
+    }
+
+    .modal-info a {
+      display: inline-block;
+      color: #4FC3F7;
+      font-weight: bold;
+      text-decoration: underline;
+      margin-bottom: 15px;
+      font-size: 15px;
     }
 
     .modal-cerrar {
@@ -63,7 +93,6 @@
     }
 
     .btn-ruta {
-      margin-top: 15px;
       padding: 12px 24px;
       background-color: #E91E63;
       color: white;
@@ -80,10 +109,17 @@
 
   <div id="map"></div>
 
-  <!-- Ventana Modal emergente para la imagen en grande -->
+  <!-- Ventana Modal emergente -->
   <div id="modalImagen" class="modal-imagen">
     <span class="modal-cerrar" id="btnCerrar">&times;</span>
     <img id="imgGrande" class="modal-contenido" src="" alt="Mercado Santo Domingo Las Rosas" />
+    
+    <div class="modal-info">
+      <h3>Mercado Santo Domingo Las Rosas</h3>
+      <p id="textoDescripcion">Punto emblemático de abasto y encuentro comunitario en el Pedregal de Santo Domingo.</p>
+      <a id="linkVideo" href="https://youtube.com" target="_blank">📺 Ver video del lugar</a>
+    </div>
+
     <button class="btn-ruta" id="btnTrazarRuta">Trazar ruta hacia este punto</button>
   </div>
 
@@ -91,8 +127,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Leaflet Routing Machine JS -->
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-  <!-- Leaflet PolylineDecorator (Para las huellitas a lo largo de la ruta) -->
-  <script src="https://cdn.jsdelivr.net/npm/leaflet-polylinedecorator@1.6.0/leaflet.polylineDecorator.min.js"></script>
 
   <script>
     // 1. Coordenadas del Mercado Santo Domingo Las Rosas
@@ -131,16 +165,6 @@
     });
 
     let routingControl = null;
-    let decorator = null; // Capa para las huellitas
-
-    // Icono SVG de huellita de animalito para la ruta
-    const huellaSvg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23E91E63'><path d='M12 14c-2.5 0-4.5 1.8-4.5 4 0 1.5 1 2.5 2.5 2.5 1.2 0 2-.6 2-1.5 0 .9.8 1.5 2 1.5 1.5 0 2.5-1 2.5-2.5 0-2.2-2-4-4.5-4zm-5.5-3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm11 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.5-5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/></svg>";
-
-    const huellaIcon = L.icon({
-      iconUrl: huellaSvg,
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
-    });
 
     // Marcador del Mercado
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
@@ -191,13 +215,10 @@
       );
     }
 
-    // 5. Función de Trazado de Ruta con Huellitas
+    // 5. Función de Trazado de Ruta
     function trazarRuta(origen, destino) {
       if (routingControl !== null) {
         map.removeControl(routingControl);
-      }
-      if (decorator !== null) {
-        map.removeLayer(decorator);
       }
 
       routingControl = L.Routing.control({
@@ -207,38 +228,16 @@
         ],
         router: L.Routing.osrmv1({ profile: 'foot' }),
         lineOptions: {
-          styles: [{ color: '#E91E63', opacity: 0.3, weight: 6 }] // Línea guía tenue
+          styles: [
+            { color: '#E91E63', opacity: 0.8, weight: 8 }, // Línea rosa de fondo
+            { color: '#FFFFFF', opacity: 0.9, weight: 3, dashArray: '5, 15' } // Trazo punteado que simula pisadas
+          ]
         },
         createMarker: function() { return null; },
         addWaypoints: false,
         draggableWaypoints: false,
         fitSelectedRoutes: false
       }).addTo(map);
-
-      // Cuando la ruta se calcula, dibujamos las huellitas a lo largo del camino
-      routingControl.on('routesfound', function(e) {
-        if (decorator !== null) {
-          map.removeLayer(decorator);
-        }
-
-        const route = e.routes[0];
-        const line = L.polyline(route.coordinates);
-
-        decorator = L.polylineDecorator(line, {
-          patterns: [
-            {
-              offset: 15, // Distancia inicial
-              repeat: 30, // Separación entre cada huellita en píxeles
-              symbol: L.Symbol.marker({
-                rotate: true, // Orienta las huellitas hacia la dirección del camino
-                markerOptions: {
-                  icon: huellaIcon
-                }
-              })
-            }
-          ]
-        }).addTo(map);
-      });
     }
   </script>
 </body>
