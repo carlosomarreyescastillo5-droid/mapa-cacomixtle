@@ -8,8 +8,6 @@
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Leaflet Routing Machine CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -125,8 +123,6 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Leaflet Routing Machine JS -->
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
   <script>
     // 1. Coordenadas del Mercado Santo Domingo Las Rosas
@@ -164,7 +160,10 @@
       className: 'custom-icon'
     });
 
-    let routingControl = null;
+    // Capas para las líneas de la ruta
+    let lineaFondo = null;
+    let lineaHuellas = null;
+    let rutaActiva = false;
 
     // Marcador del Mercado
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
@@ -185,6 +184,7 @@
 
     btnTrazarRuta.onclick = function() {
       modal.style.display = 'none';
+      rutaActiva = true;
       trazarRuta(userCoords, mercadoCoords);
     };
 
@@ -204,7 +204,7 @@
             primerCentrado = true;
           }
 
-          if (routingControl !== null) {
+          if (rutaActiva) {
             trazarRuta(userCoords, mercadoCoords);
           }
         },
@@ -215,28 +215,27 @@
       );
     }
 
-    // 5. Función de Trazado de Ruta
+    // 5. Función de Trazado Directo e Inmediato
     function trazarRuta(origen, destino) {
-      if (routingControl !== null) {
-        map.removeControl(routingControl);
-      }
+      // Limpiar líneas previas si existen
+      if (lineaFondo) map.removeLayer(lineaFondo);
+      if (lineaHuellas) map.removeLayer(lineaHuellas);
 
-      routingControl = L.Routing.control({
-        waypoints: [
-          L.latLng(origen[0], origen[1]),
-          L.latLng(destino[0], destino[1])
-        ],
-        router: L.Routing.osrmv1({ profile: 'foot' }),
-        lineOptions: {
-          styles: [
-            { color: '#E91E63', opacity: 0.8, weight: 8 }, // Línea rosa de fondo
-            { color: '#FFFFFF', opacity: 0.9, weight: 3, dashArray: '5, 15' } // Trazo punteado que simula pisadas
-          ]
-        },
-        createMarker: function() { return null; },
-        addWaypoints: false,
-        draggableWaypoints: false,
-        fitSelectedRoutes: false
+      const PuntosRuta = [origen, destino];
+
+      // Línea rosa de base
+      lineaFondo = L.polyline(PuntosRuta, {
+        color: '#E91E63',
+        weight: 8,
+        opacity: 0.7
+      }).addTo(map);
+
+      // Trazo blanco punteado simulando pisadas sobre la ruta
+      lineaHuellas = L.polyline(PuntosRuta, {
+        color: '#FFFFFF',
+        weight: 4,
+        opacity: 0.9,
+        dashArray: '8, 12'
       }).addTo(map);
     }
   </script>
