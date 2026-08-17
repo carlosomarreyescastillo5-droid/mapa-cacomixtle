@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+     <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -22,7 +23,56 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.4);
       object-fit: cover;
       background-color: #ffffff;
-      transition: all 0.3s ease; /* Transición suave cuando el personaje avanza */
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    /* --- ESTILOS PARA LA VENTANA MODAL GRANDE DE LA IMAGEN --- */
+    .modal-imagen {
+      display: none; /* Oculto por defecto */
+      position: fixed;
+      z-index: 10000; /* Asegura que se muestre sobre el mapa */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85); /* Fondo oscuro semitransparente */
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .modal-contenido {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+      object-fit: contain;
+    }
+
+    .modal-cerrar {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      color: #ffffff;
+      font-size: 35px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn-ruta {
+      margin-top: 15px;
+      padding: 12px 24px;
+      background-color: #E91E63;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
   </style>
 </head>
@@ -30,13 +80,20 @@
 
   <div id="map"></div>
 
+  <!-- Ventana Modal emergente para la imagen en grande -->
+  <div id="modalImagen" class="modal-imagen">
+    <span class="modal-cerrar" id="btnCerrar">&times;</span>
+    <img id="imgGrande" class="modal-contenido" src="" alt="Mercado Santo Domingo Las Rosas" />
+    <button class="btn-ruta" id="btnTrazarRuta">Trazar ruta hacia este punto</button>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Leaflet Routing Machine JS -->
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
   <script>
-    // 1. Coordenadas del Mercado Santo Domingo Las Rosas (Corregidas)
+    // 1. Coordenadas del Mercado Santo Domingo Las Rosas
     const mercadoCoords = [19.331328473315608, -99.16249745266929];
 
     // 2. Coordenadas por defecto (se reemplazan de inmediato con tu GPS)
@@ -75,11 +132,36 @@
 
     // Marcador del Mercado
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
-    mercadoMarker.bindPopup('<b>Mercado Santo Domingo Las Rosas</b><br>¡Haz clic para trazar la ruta!');
 
+    // --- LÓGICA DE LA VENTANA MODAL EN GRANDE ---
+    const modal = document.getElementById('modalImagen');
+    const imgGrande = document.getElementById('imgGrande');
+    const btnCerrar = document.getElementById('btnCerrar');
+    const btnTrazarRuta = document.getElementById('btnTrazarRuta');
+
+    // Al hacer clic en el icono del mercado, abre la foto en grande
     mercadoMarker.on('click', function () {
-      trazarRuta(userCoords, mercadoCoords);
+      imgGrande.src = urlMercado;
+      modal.style.display = 'flex';
     });
+
+    // Cerrar con la 'X'
+    btnCerrar.onclick = function() {
+      modal.style.display = 'none';
+    };
+
+    // Cerrar si hacen clic fuera de la imagen
+    modal.onclick = function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+
+    // Botón dentro del modal para trazar la ruta
+    btnTrazarRuta.onclick = function() {
+      modal.style.display = 'none';
+      trazarRuta(userCoords, mercadoCoords);
+    };
 
     // Marcador del Cacomixtle
     let userMarker = L.marker(userCoords, { icon: cacomixtleIcon }).addTo(map);
@@ -109,8 +191,8 @@
           console.warn("Asegúrate de activar el GPS/Ubicación de tu celular.");
         },
         {
-          enableHighAccuracy: true, // Fuerza el uso del GPS de alta precisión del teléfono
-          maximumAge: 1000,          // Actualiza lecturas de hace máximo 1 segundo
+          enableHighAccuracy: true,
+          maximumAge: 1000,
           timeout: 10000
         }
       );
@@ -131,10 +213,10 @@
         lineOptions: {
           styles: [{ color: '#E91E63', opacity: 0.9, weight: 7 }]
         },
-        createMarker: function() { return null; }, // Conserva nuestros marcadores personalizados
+        createMarker: function() { return null; },
         addWaypoints: false,
         draggableWaypoints: false,
-        fitSelectedRoutes: false // Evita que la cámara se aleje brusca al recalcular
+        fitSelectedRoutes: false
       }).addTo(map);
     }
   </script>
