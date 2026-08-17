@@ -160,9 +160,9 @@
       className: 'custom-icon'
     });
 
-    // Capas para las líneas de la ruta
-    let lineaFondo = null;
-    let lineaHuellas = null;
+    // Capas de la ruta y huellas
+    let lineaRuta = null;
+    let marcadoresHuellas = [];
     let rutaActiva = false;
 
     // Marcador del Mercado
@@ -185,7 +185,7 @@
     btnTrazarRuta.onclick = function() {
       modal.style.display = 'none';
       rutaActiva = true;
-      trazarRuta(userCoords, mercadoCoords);
+      trazarRutaPorCalles(userCoords, mercadoCoords);
     };
 
     // Marcador del Cacomixtle
@@ -205,7 +205,7 @@
           }
 
           if (rutaActiva) {
-            trazarRuta(userCoords, mercadoCoords);
+            trazarRutaPorCalles(userCoords, mercadoCoords);
           }
         },
         function (error) {
@@ -215,28 +215,46 @@
       );
     }
 
-    // 5. Función de Trazado Directo e Inmediato
-    function trazarRuta(origen, destino) {
-      // Limpiar líneas previas si existen
-      if (lineaFondo) map.removeLayer(lineaFondo);
-      if (lineaHuellas) map.removeLayer(lineaHuellas);
+    // 5. Función que pide la ruta por CALLES reales y coloca HUELLITAS
+    function trazarRutaPorCalles(origen, destino) {
+      const urlOSRM = `https://router.project-osrm.org/route/v1/foot/${origen[1]},${origen[0]};${destino[1]},${destino[0]}?overview=full&geometries=geojson`;
 
-      const PuntosRuta = [origen, destino];
+      fetch(urlOSRM)
+        .then(response => response.json())
+        .then(data => {
+          if (data.routes && data.routes.length > 0) {
+            const coordinates = data.routes[0].geometry.coordinates;
+            const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
 
-      // Línea rosa de base
-      lineaFondo = L.polyline(PuntosRuta, {
-        color: '#E91E63',
-        weight: 8,
-        opacity: 0.7
-      }).addTo(map);
+            // Limpiar trazos previos
+            if (lineaRuta) map.removeLayer(lineaRuta);
+            marcadoresHuellas.forEach(m => map.removeLayer(m));
+            marcadoresHuellas = [];
 
-      // Trazo blanco punteado simulando pisadas sobre la ruta
-      lineaHuellas = L.polyline(PuntosRuta, {
-        color: '#FFFFFF',
-        weight: 4,
-        opacity: 0.9,
-        dashArray: '8, 12'
-      }).addTo(map);
+            // Dibujar la línea rosa por las calles
+            lineaRuta = L.polyline(latLngs, {
+              color: '#E91E63',
+              weight: 6,
+              opacity: 0.8
+            }).addTo(map);
+
+            // Icono SVG de huellita
+            const huellaSvg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'><path d='M12 14c-2.5 0-4.5 1.8-4.5 4 0 1.5 1 2.5 2.5 2.5 1.2 0 2-.6 2-1.5 0 .9.8 1.5 2 1.5 1.5 0 2.5-1 2.5-2.5 0-2.2-2-4-4.5-4zm-5.5-3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm11 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-8.5-5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/></svg>";
+            const iconHuella = L.icon({
+              iconUrl: huellaSvg,
+              iconSize: [16, 16],
+              iconAnchor: [8, 8]
+            });
+
+            // Colocar huellitas espaciadas a lo largo de las coordenadas de las calles
+            const salto = Math.max(1, Math.floor(latLngs.length / 15));
+            for (let i = 0; i < latLngs.length; i += salto) {
+              const markerH = L.marker(latLngs[i], { icon: iconHuella }).addTo(map);
+              marcadoresHuellas.push(markerH);
+            }
+          }
+        })
+        .catch(err => console.error("Error obteniendo ruta por calles:", err));
     }
   </script>
 </body>
