@@ -36,8 +36,8 @@
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
   <script>
-    // 1. Coordenadas del Mercado Santo Domingo Las Rosas
-    const mercadoCoords = [19.3242, -99.1608];
+    // 1. Coordenadas del Mercado Santo Domingo Las Rosas (Corregidas)
+    const mercadoCoords = [19.331328473315608, -99.16249745266929];
 
     // 2. Coordenadas por defecto (se reemplazan de inmediato con tu GPS)
     let userCoords = [19.3310, -99.1620]; 
@@ -110,7 +110,7 @@
         },
         {
           enableHighAccuracy: true, // Fuerza el uso del GPS de alta precisión del teléfono
-          maximumAge: 1000,         // Actualiza lecturas de hace máximo 1 segundo
+          maximumAge: 1000,          // Actualiza lecturas de hace máximo 1 segundo
           timeout: 10000
         }
       );
