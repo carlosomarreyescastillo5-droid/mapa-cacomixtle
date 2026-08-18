@@ -112,10 +112,10 @@
   <!-- Ventana Modal emergente -->
   <div id="modalImagen" class="modal-imagen">
     <span class="modal-cerrar" id="btnCerrar">&times;</span>
-    <img id="imgGrande" class="modal-contenido" src="" alt="Mercado Santo Domingo Las Rosas" />
+    <img id="imgGrande" class="modal-contenido" src="" alt="Punto de Interés" />
     
     <div class="modal-info">
-      <h3>Mercado Santo Domingo "LAS ROSAS"</h3>
+      <h3 id="modalTitulo">Mercado Santo Domingo "LAS ROSAS"</h3>
       <p id="textoDescripcion">Surgió a la par del vertiginoso crecimiento del Pedregal de Santo Domingo a partir de las ocupaciones comunitarias de la década de 1970 sobre el terreno volcánico del Xitle. Fundado formalmente para dotar de abastecimiento básico a las familias que consolidaron la colonia, el mercado representa el paso de la autogestión urbana a la formalización de los servicios públicos en la zona.</p>
       <a id="linkVideo" href="https://drive.google.com/file/d/1-gIF3OPCS256DoxIeX3ygM_-KHVum9vq/view?usp=sharing" target="_blank">📺 Ver video del lugar</a>
     </div>
@@ -127,10 +127,14 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // 1. Coordenadas del Mercado Santo Domingo Las Rosas
+    // 1. Coordenadas de los Puntos de Interés
     const mercadoCoords = [19.331328473315608, -99.16249745266929];
+    const mercadoCopilcoCoords = [19.33206414879216, -99.17026841588856];
 
-    // 2. Coordenadas por defecto
+    // Variables para el destino dinámico al trazar ruta
+    let destinoActual = mercadoCoords;
+
+    // 2. Coordenadas por defecto (Cacomixtle)
     let userCoords = [19.3310, -99.1620]; 
     let primerCentrado = false;
 
@@ -144,8 +148,10 @@
 
     // --- ENLACES DIRECTOS DE IMGBB ---
     const urlMercado = 'https://i.ibb.co/BVQkk5FQ/mercado-de-las-roas.jpg';
+    const urlMercadoCopilco = 'https://i.ibb.co/m5SR4nfj/FOTO-OFICIAL.jpg';
     const urlCacomixtle = 'https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png';
 
+    // Marcador Cacomixtle
     const cacomixtleIcon = L.icon({
       iconUrl: urlCacomixtle,
       iconSize: [60, 60],
@@ -154,8 +160,18 @@
       className: 'custom-icon'
     });
 
+    // Marcador Mercado Las Rosas
     const mercadoIcon = L.icon({
       iconUrl: urlMercado,
+      iconSize: [60, 60],
+      iconAnchor: [30, 30],
+      popupAnchor: [0, -30],
+      className: 'custom-icon'
+    });
+
+    // Marcador Mercado 347 Copilco el Alto (Mismo tamaño 60x60)
+    const mercadoCopilcoIcon = L.icon({
+      iconUrl: urlMercadoCopilco,
       iconSize: [60, 60],
       iconAnchor: [30, 30],
       popupAnchor: [0, -30],
@@ -167,17 +183,36 @@
     let marcadoresHuellas = [];
     let rutaActiva = false;
 
-    // Marcador del Mercado
+    // Colocar Marcadores en el mapa
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
+    const mercadoCopilcoMarker = L.marker(mercadoCopilcoCoords, { icon: mercadoCopilcoIcon }).addTo(map);
 
     // Modal
     const modal = document.getElementById('modalImagen');
     const imgGrande = document.getElementById('imgGrande');
+    const modalTitulo = document.getElementById('modalTitulo');
+    const textoDescripcion = document.getElementById('textoDescripcion');
+    const linkVideo = document.getElementById('linkVideo');
     const btnCerrar = document.getElementById('btnCerrar');
     const btnTrazarRuta = document.getElementById('btnTrazarRuta');
 
+    // Clic en Punto 1: Mercado Las Rosas
     mercadoMarker.on('click', function () {
       imgGrande.src = urlMercado;
+      modalTitulo.textContent = 'Mercado Santo Domingo "LAS ROSAS"';
+      textoDescripcion.textContent = 'Surgió a la par del vertiginoso crecimiento del Pedregal de Santo Domingo a partir de las ocupaciones comunitarias de la década de 1970 sobre el terreno volcánico del Xitle. Fundado formalmente para dotar de abastecimiento básico a las familias que consolidaron la colonia, el mercado representa el paso de la autogestión urbana a la formalización de los servicios públicos en la zona.';
+      linkVideo.style.display = 'inline-block';
+      destinoActual = mercadoCoords;
+      modal.style.display = 'flex';
+    });
+
+    // Clic en Punto 2: Mercado Copilco el Alto
+    mercadoCopilcoMarker.on('click', function () {
+      imgGrande.src = urlMercadoCopilco;
+      modalTitulo.textContent = 'Mercado No. 347 "Copilco el Alto"';
+      textoDescripcion.textContent = 'Centro de abasto tradicional fundado para brindar atención y comercio a la comunidad de Copilco el Alto y los pedregales vecinos. Representa un referente de encuentro vecinal e historia urbana local.';
+      linkVideo.style.display = 'none'; // Se oculta video mientras agregamos el suyo
+      destinoActual = mercadoCopilcoCoords;
       modal.style.display = 'flex';
     });
 
@@ -187,7 +222,7 @@
     btnTrazarRuta.onclick = function() {
       modal.style.display = 'none';
       rutaActiva = true;
-      trazarRutaPorCalles(userCoords, mercadoCoords);
+      trazarRutaPorCalles(userCoords, destinoActual);
     };
 
     // Marcador del Cacomixtle
@@ -207,7 +242,7 @@
           }
 
           if (rutaActiva) {
-            trazarRutaPorCalles(userCoords, mercadoCoords);
+            trazarRutaPorCalles(userCoords, destinoActual);
           }
         },
         function (error) {
