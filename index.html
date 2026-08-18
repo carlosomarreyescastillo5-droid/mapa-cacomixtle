@@ -228,6 +228,7 @@
     // 1. Coordenadas de los Puntos de Interés
     const mercadoCoords = [19.331328473315608, -99.16249745266929];
     const mercadoCopilcoCoords = [19.33206414879216, -99.17026841588856];
+    const parqueTepocatlCoords = [19.330606797917874, -99.16074211773814];
 
     let destinoActual = mercadoCoords;
     let quizActual = null;
@@ -253,6 +254,16 @@
         ],
         mensajeExito: "¡Correcto! Todo Santo Domingo se erigió sobre la lava derramada por el volcán Xitle.",
         audioExito: "¡Correcto! Santo Domingo y Copilco se erigieron sobre la roca volcánica del Xitle."
+      },
+      tepocatl: {
+        pregunta: "🏆 🦊 🥳 ¿Qué representa el Parque Tepocatl para la comunidad del Pedregal?",
+        opciones: [
+          { texto: "a) Un punto de encuentro, recreación y recuperación comunitaria", correcta: true },
+          { texto: "b) Un centro comercial subterráneo", correcta: false },
+          { texto: "c) Una estación de autobuses interurbanos", correcta: false }
+        ],
+        mensajeExito: "¡Correcto! Es un importante espacio público para la convivencia y actividades comunitarias.",
+        audioExito: "¡Correcto! El Parque Tepocatl es un espacio recuperado para el encuentro de la comunidad."
       }
     };
 
@@ -271,12 +282,14 @@
     // --- ENLACES DIRECTOS DE IMÁGENES ---
     const urlMercado = 'https://i.ibb.co/BVQkk5FQ/mercado-de-las-roas.jpg';
     const urlMercadoCopilco = 'https://i.ibb.co/m5SR4nfj/FOTO-OFICIAL.jpg';
+    const urlParqueTepocatl = 'https://i.ibb.co/QjqTNFpX/PARQUE-ANIMADO.jpg';
     const urlCacomixtle = 'https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png';
 
     // Marcadores Iconos
     const cacomixtleIcon = L.icon({ iconUrl: urlCacomixtle, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
     const mercadoIcon = L.icon({ iconUrl: urlMercado, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
     const mercadoCopilcoIcon = L.icon({ iconUrl: urlMercadoCopilco, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
+    const parqueTepocatlIcon = L.icon({ iconUrl: urlParqueTepocatl, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
 
     // Capas
     let lineaRuta = null;
@@ -285,6 +298,7 @@
 
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
     const mercadoCopilcoMarker = L.marker(mercadoCopilcoCoords, { icon: mercadoCopilcoIcon }).addTo(map);
+    const parqueTepocatlMarker = L.marker(parqueTepocatlCoords, { icon: parqueTepocatlIcon }).addTo(map);
 
     // Elementos DOM del Modal
     const modal = document.getElementById('modalImagen');
@@ -372,6 +386,20 @@
       
       cargarQuiz(trivias.copilco);
       modal.style.display = 'flex';
+    });
+
+    // Clic Parque Tepocatl
+    parqueTepocatlMarker.on('click', function () {
+      imgGrande.src = urlParqueTepocatl;
+      modalTitulo.textContent = 'Parque Tepocatl';
+      burbujaPregon.style.display = 'none';
+      textoDescripcion.textContent = 'El Parque Tepocatl es un espacio público clave en el Pedregal de Santo Domingo, destinado a la recreación, el encuentro vecinal y la intervención comunitaria. Como parte de los esfuerzos de recuperación del entorno urbano, el parque se consolida como un punto vital para la convivencia y la expresión cultural del barrio.';
+      linkVideo.style.display = 'none'; // Se actualizará cuando compartas el enlace del video
+      destinoActual = parqueTepocatlCoords;
+      
+      cargarQuiz(trivias.tepocatl);
+      modal.style.display = 'flex';
+      hablarTexto("¡Bienvenido al Parque Tepocatl! Un espacio para la comunidad y la convivencia.", 1.0, 1.1);
     });
 
     btnCerrar.onclick = function() { 
