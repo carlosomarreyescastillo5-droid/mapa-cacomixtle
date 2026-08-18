@@ -44,7 +44,7 @@
 
     .modal-contenido {
       max-width: 90%;
-      max-height: 40vh;
+      max-height: 35vh;
       border-radius: 12px;
       box-shadow: 0 5px 25px rgba(0,0,0,0.5);
       object-fit: contain;
@@ -59,8 +59,22 @@
 
     .modal-info h3 {
       font-size: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: #FFD54F;
+    }
+
+    /* Burbuja de diálogo del Mercado */
+    .burbuja-pregon {
+      display: none;
+      background: #E91E63;
+      color: #ffffff;
+      padding: 10px 15px;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+      line-height: 1.4;
     }
 
     .modal-info p {
@@ -133,6 +147,7 @@
     
     <div class="modal-info">
       <h3 id="modalTitulo">Mercado Santo Domingo "LAS ROSAS"</h3>
+      <div id="burbujaPregon" class="burbuja-pregon"></div>
       <p id="textoDescripcion">Surgió a la par del vertiginoso crecimiento del Pedregal de Santo Domingo a partir de las ocupaciones comunitarias de la década de 1970 sobre el terreno volcánico del Xitle. Fundado formalmente para dotar de abastecimiento básico a las familias que consolidaron la colonia, el mercado representa el paso de la autogestión urbana a la formalización de los servicios públicos en la zona.</p>
       <a id="linkVideo" href="https://drive.google.com/file/d/1-gIF3OPCS256DoxIeX3ygM_-KHVum9vq/view?usp=sharing" target="_blank">📺 Ver video del lugar</a>
     </div>
@@ -208,26 +223,48 @@
     const modal = document.getElementById('modalImagen');
     const imgGrande = document.getElementById('imgGrande');
     const modalTitulo = document.getElementById('modalTitulo');
+    const burbujaPregon = document.getElementById('burbujaPregon');
     const textoDescripcion = document.getElementById('textoDescripcion');
     const linkVideo = document.getElementById('linkVideo');
     const btnCerrar = document.getElementById('btnCerrar');
     const btnTrazarRuta = document.getElementById('btnTrazarRuta');
 
+    // Función de Voz para reproducir frases
+    function hablarTexto(texto, velocidad = 1.0, tono = 1.0) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const locucion = new SpeechSynthesisUtterance(texto);
+        locucion.lang = 'es-MX';
+        locucion.rate = velocidad;
+        locucion.pitch = tono;
+        window.speechSynthesis.speak(locucion);
+      }
+    }
+
     // Clic en Punto 1: Mercado Las Rosas
     mercadoMarker.on('click', function () {
       imgGrande.src = urlMercado;
       modalTitulo.textContent = 'Mercado Santo Domingo "LAS ROSAS"';
+      
+      // Activar y mostrar la burbuja de pregón con emojis
+      burbujaPregon.innerHTML = '📢 🌽 🍎 🥑 🧔🏻‍♂️ 💖 <br><b>¡¡ PÁSELE, PÁSELE !! ¡¡ LLÉVELE, LLÉVELE !!<br>¡¡ FRUTAS Y VERDURAS FRESCAS DE HOY !!</b>';
+      burbujaPregon.style.display = 'block';
+
       textoDescripcion.textContent = 'Surgió a la par del vertiginoso crecimiento del Pedregal de Santo Domingo a partir de las ocupaciones comunitarias de la década de 1970 sobre el terreno volcánico del Xitle. Fundado formalmente para dotar de abastecimiento básico a las familias que consolidaron la colonia, el mercado representa el paso de la autogestión urbana a la formalización de los servicios públicos en la zona.';
       linkVideo.href = 'https://drive.google.com/file/d/1-gIF3OPCS256DoxIeX3ygM_-KHVum9vq/view?usp=sharing';
       linkVideo.style.display = 'inline-block';
       destinoActual = mercadoCoords;
       modal.style.display = 'flex';
+
+      // Reproducir pregón por audio
+      hablarTexto("Pásele, pásele, llévele, llévele, frutas y verduras frescas de hoy", 1.1, 1.2);
     });
 
     // Clic en Punto 2: Mercado Copilco El Alto
     mercadoCopilcoMarker.on('click', function () {
       imgGrande.src = urlMercadoCopilco;
       modalTitulo.textContent = 'Mercado No. 347 "Copilco El Alto"';
+      burbujaPregon.style.display = 'none'; // Ocultar pregón en Copilco
       textoDescripcion.textContent = 'Nacido de la histórica lucha comunitaria que transformó la roca volcánica en hogar, el Mercado Copilco El Alto es memoria viva del Pedregal de Santo Domingo. Más que un centro de abasto, es un pilar de identidad y tradición donde el esfuerzo colectivo de sus fundadores sigue resonando en cada pasillo. Entre el andar diario de los vecinos, la calidez de sus comerciantes y el sazón de su gente, el mercado resguarda la esencia solidaria de un barrio que se construyó con las manos de su propia comunidad.';
       linkVideo.href = 'https://drive.google.com/file/d/1MRsbJUCbXXKFMwJo88o_Pw89Ybjf3BWO/view?usp=sharing';
       linkVideo.style.display = 'inline-block';
@@ -235,16 +272,25 @@
       modal.style.display = 'flex';
     });
 
-    btnCerrar.onclick = function() { modal.style.display = 'none'; };
-    modal.onclick = function(e) { if (e.target === modal) modal.style.display = 'none'; };
+    btnCerrar.onclick = function() { 
+      modal.style.display = 'none'; 
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    };
+    modal.onclick = function(e) { 
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    };
 
     btnTrazarRuta.onclick = function() {
       modal.style.display = 'none';
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       rutaActiva = true;
       trazarRutaPorCalles(userCoords, destinoActual);
     };
 
-    // Marcador del Cacomixtle con Pop-up y Voz sintética
+    // Marcador del Cacomixtle
     let userMarker = L.marker(userCoords, { icon: cacomixtleIcon }).addTo(map);
 
     const mensajeCacomixtle = "Prepárate para conocer el Pedregal de Santo Domingo, ¡acompáñame en este recorrido!";
@@ -258,24 +304,9 @@
 
     userMarker.bindPopup(contenidoPopupCacomixtle);
 
-    // Función para reproducir el mensaje de voz del Cacomixtle
-    function hablarCacomixtle() {
-      if ('speechSynthesis' in window) {
-        // Cancelar cualquier audio previo
-        window.speechSynthesis.cancel();
-
-        const locucion = new SpeechSynthesisUtterance(mensajeCacomixtle);
-        locucion.lang = 'es-MX'; // Español de México
-        locucion.rate = 0.95;    // Velocidad normal/amigable
-        locucion.pitch = 1.1;    // Tono ligeramente animado
-
-        window.speechSynthesis.speak(locucion);
-      }
-    }
-
-    // Al tocar/clic en el Cacomixtle, habla automáticamente
+    // Al tocar el Cacomixtle
     userMarker.on('click', function() {
-      hablarCacomixtle();
+      hablarTexto(mensajeCacomixtle, 0.95, 1.1);
     });
 
     // 4. RASTREO EN TIEMPO REAL
