@@ -1,5 +1,5 @@
 
-   <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -256,14 +256,14 @@
         audioExito: "¡Correcto! Santo Domingo y Copilco se erigieron sobre la roca volcánica del Xitle."
       },
       tepocatl: {
-        pregunta: "🏆 🦊 🥳 ¿Qué representa el Parque Tepocatl para la comunidad del Pedregal?",
+        pregunta: "🏆 🦊 🥳 ¿Cuáles son algunas actividades que buscan recuperar la identidad del Parque Tepocatl?",
         opciones: [
-          { texto: "a) Un punto de encuentro, recreación y recuperación comunitaria", correcta: true },
-          { texto: "b) Un centro comercial subterráneo", correcta: false },
-          { texto: "c) Una estación de autobuses interurbanos", correcta: false }
+          { texto: "a) Animación digital, lecturas, vinilos y juegos tradicionales", correcta: true },
+          { texto: "b) Carreras de autos de alta velocidad", correcta: false },
+          { texto: "c) Demolición de espacios verdes", correcta: false }
         ],
-        mensajeExito: "¡Correcto! Es un importante espacio público para la convivencia y actividades comunitarias.",
-        audioExito: "¡Correcto! El Parque Tepocatl es un espacio recuperado para el encuentro de la comunidad."
+        mensajeExito: "¡Excelente! A través del arte, la música y los juegos tradicionales se crea comunidad.",
+        audioExito: "¡Excelente! Con arte, cine, música y juegos tradicionales recuperamos el Parque Tepocatl."
       }
     };
 
@@ -393,13 +393,14 @@
       imgGrande.src = urlParqueTepocatl;
       modalTitulo.textContent = 'Parque Tepocatl';
       burbujaPregon.style.display = 'none';
-      textoDescripcion.textContent = 'El Parque Tepocatl es un espacio público clave en el Pedregal de Santo Domingo, destinado a la recreación, el encuentro vecinal y la intervención comunitaria. Como parte de los esfuerzos de recuperación del entorno urbano, el parque se consolida como un punto vital para la convivencia y la expresión cultural del barrio.';
-      linkVideo.style.display = 'none'; // Se actualizará cuando compartas el enlace del video
+      textoDescripcion.innerHTML = 'Bienvenidos a parque Tepocatl, 🌳 un lugar que buscamos recuperar con la presencia de actividades artísticas y culturales 🖌️🎬🎭 como animación digital, lecturas, eventos especiales como recuerdos de música 🎵 y canciones en vinilos, juegos tradicionales y de destreza, también realizamos entrevistas y mucho más, con el objetivo de crear comunidad e identidad del lugar para que este sea un espacio de convivencia, sano y divertido 😊💖';
+      linkVideo.href = 'https://drive.google.com/file/d/1YQJKy88_vkFqam5Q7KWzNhKqq7twVomP/view?usp=sharing';
+      linkVideo.style.display = 'inline-block';
       destinoActual = parqueTepocatlCoords;
       
       cargarQuiz(trivias.tepocatl);
       modal.style.display = 'flex';
-      hablarTexto("¡Bienvenido al Parque Tepocatl! Un espacio para la comunidad y la convivencia.", 1.0, 1.1);
+      hablarTexto("¡Bienvenidos al Parque Tepocatl! Un espacio para la convivencia, el arte y la comunidad.", 1.0, 1.1);
     });
 
     btnCerrar.onclick = function() { 
