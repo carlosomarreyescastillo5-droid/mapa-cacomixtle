@@ -422,13 +422,13 @@
       imgGrande.src = urlParqueAmezquite;
       modalTitulo.textContent = 'Parque Amézquite';
       burbujaPregon.style.display = 'none';
-      textoDescripcion.textContent = 'Ubicado en el corazón del Pedregal de Santo Domingo, el Parque Amézquite representa un punto vital de encuentro comunitario, espacio verde y recreación para vecinas y vecinos. Su recuperación y preservación como espacio público fortalece la convivencia pacífica, la expresión cultural comunitaria y el esparcimiento seguro en el barrio.';
+      textoDescripcion.innerHTML = 'En el parque amezquite 🌳 puedes encontrar a los promotores culturales de coyoacan con actividades culturales y artísticas 🖼️ como animación digital 🎮, juegos tradicionales y de destreza 🎲♟️, pintura 🎨, títeres, dibujos 🖌️🖍️ y mucho más. Este territorio se trabaja para crear comunidad con las y los vecinos del parque y sus alrededores escuchando sus peticiones culturales, promoviendo la cultura de la colonia por medio de su historia creando identidad con el lugar. 👨🏻‍💼👩🏻‍💼👵🏼👶🏻💖';
       linkVideo.style.display = 'none'; // Oculto hasta tener enlace de video
       destinoActual = parqueAmezquiteCoords;
       
       cargarQuiz(trivias.amezquite);
       modal.style.display = 'flex';
-      hablarTexto("¡Te damos la bienvenida al Parque Amézquite! Un espacio público de encuentro y convivencia vecinal.", 1.0, 1.1);
+      hablarTexto("En el parque Amézquite puedes encontrar a los promotores culturales de Coyoacán con actividades artísticas y culturales para crear comunidad.", 1.0, 1.1);
     });
 
     btnCerrar.onclick = function() { 
