@@ -229,6 +229,7 @@
     const mercadoCoords = [19.331328473315608, -99.16249745266929];
     const mercadoCopilcoCoords = [19.33206414879216, -99.17026841588856];
     const parqueTepocatlCoords = [19.330606797917874, -99.16074211773814];
+    const parqueAmezquiteCoords = [19.332821262974168, -99.16477662383282];
 
     let destinoActual = mercadoCoords;
     let quizActual = null;
@@ -264,6 +265,16 @@
         ],
         mensajeExito: "¡Excelente! A través del arte, la música y los juegos tradicionales se crea comunidad.",
         audioExito: "¡Excelente! Con arte, cine, música y juegos tradicionales recuperamos el Parque Tepocatl."
+      },
+      amezquite: {
+        pregunta: "🏆 🦊 🥳 ¿Qué importancia tienen los espacios recreativos y parques de barrio en el Pedregal?",
+        opciones: [
+          { texto: "a) Son áreas de encuentro comunitario, esparcimiento y convivencia vecinal", correcta: true },
+          { texto: "b) Son estacionamientos exclusivos para automóviles", correcta: false },
+          { texto: "c) Son únicamente zonas de reserva industrial", correcta: false }
+        ],
+        mensajeExito: "¡Muy bien! Los parques de barrio son el corazón del encuentro y la vida comunitaria.",
+        audioExito: "¡Muy bien! Los parques comunitarios fortalecen el tejido social y la convivencia del barrio."
       }
     };
 
@@ -283,6 +294,7 @@
     const urlMercado = 'https://i.ibb.co/BVQkk5FQ/mercado-de-las-roas.jpg';
     const urlMercadoCopilco = 'https://i.ibb.co/m5SR4nfj/FOTO-OFICIAL.jpg';
     const urlParqueTepocatl = 'https://i.ibb.co/QjqTNFpX/PARQUE-ANIMADO.jpg';
+    const urlParqueAmezquite = 'https://i.ibb.co/Pv8JGZJg/FACHADA-PARQUE-AMEZQUITE.jpg';
     const urlCacomixtle = 'https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png';
 
     // Marcadores Iconos
@@ -290,6 +302,7 @@
     const mercadoIcon = L.icon({ iconUrl: urlMercado, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
     const mercadoCopilcoIcon = L.icon({ iconUrl: urlMercadoCopilco, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
     const parqueTepocatlIcon = L.icon({ iconUrl: urlParqueTepocatl, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
+    const parqueAmezquiteIcon = L.icon({ iconUrl: urlParqueAmezquite, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
 
     // Capas
     let lineaRuta = null;
@@ -299,6 +312,7 @@
     const mercadoMarker = L.marker(mercadoCoords, { icon: mercadoIcon }).addTo(map);
     const mercadoCopilcoMarker = L.marker(mercadoCopilcoCoords, { icon: mercadoCopilcoIcon }).addTo(map);
     const parqueTepocatlMarker = L.marker(parqueTepocatlCoords, { icon: parqueTepocatlIcon }).addTo(map);
+    const parqueAmezquiteMarker = L.marker(parqueAmezquiteCoords, { icon: parqueAmezquiteIcon }).addTo(map);
 
     // Elementos DOM del Modal
     const modal = document.getElementById('modalImagen');
@@ -401,6 +415,20 @@
       cargarQuiz(trivias.tepocatl);
       modal.style.display = 'flex';
       hablarTexto("¡Bienvenidos al Parque Tepocatl! Un espacio para la convivencia, el arte y la comunidad.", 1.0, 1.1);
+    });
+
+    // Clic Parque Amézquite
+    parqueAmezquiteMarker.on('click', function () {
+      imgGrande.src = urlParqueAmezquite;
+      modalTitulo.textContent = 'Parque Amézquite';
+      burbujaPregon.style.display = 'none';
+      textoDescripcion.textContent = 'Ubicado en el corazón del Pedregal de Santo Domingo, el Parque Amézquite representa un punto vital de encuentro comunitario, espacio verde y recreación para vecinas y vecinos. Su recuperación y preservación como espacio público fortalece la convivencia pacífica, la expresión cultural comunitaria y el esparcimiento seguro en el barrio.';
+      linkVideo.style.display = 'none'; // Oculto hasta tener enlace de video
+      destinoActual = parqueAmezquiteCoords;
+      
+      cargarQuiz(trivias.amezquite);
+      modal.style.display = 'flex';
+      hablarTexto("¡Te damos la bienvenida al Parque Amézquite! Un espacio público de encuentro y convivencia vecinal.", 1.0, 1.1);
     });
 
     btnCerrar.onclick = function() { 
