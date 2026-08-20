@@ -14,6 +14,76 @@
     body, html { width: 100%; height: 100%; font-family: sans-serif; overflow: hidden; }
     #map { width: 100%; height: 100vh; }
 
+    /* --- PANTALLA DE CARGA (LOADER) CON ANIMACIÓN DE AULLIDO --- */
+    #loaderScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #1a1a24; /* Fondo oscuro elegante que resalta */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    #loaderScreen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* Animación CSS que simula el aullido */
+    @keyframes aullido {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      20% {
+        /* Toma aire bajando un poco */
+        transform: translateY(6px) rotate(-3deg) scale(0.97);
+      }
+      45% {
+        /* Se estira e inclina hacia arriba para aullar */
+        transform: translateY(-16px) rotate(-10deg) scale(1.08);
+      }
+      60% {
+        /* Vibración/eco del aullido */
+        transform: translateY(-13px) rotate(-8deg) scale(1.08);
+      }
+      75% {
+        transform: translateY(-16px) rotate(-10deg) scale(1.08);
+      }
+      100% {
+        /* Regresa a su posición de origen */
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+    }
+
+    .coyote-animado {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      animation: aullido 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    }
+
+    .texto-loader {
+      color: #FFD54F;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .subtexto-loader {
+      color: #B0BEC5;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
     /* Estilos para los marcadores */
     .leaflet-marker-icon.custom-icon {
       border-radius: 50%;
@@ -196,6 +266,14 @@
 </head>
 <body>
 
+  <!-- PANTALLA DE CARGA -->
+  <div id="loaderScreen">
+    <!-- Reemplaza el src con la URL o ruta de tu imagen de coyote -->
+    <img id="imgCoyoteLoader" class="coyote-animado" src="https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png" alt="Coyote Aullando" />
+    <div class="texto-loader">Cargando Ruta Cultural...</div>
+    <div class="subtexto-loader">Pedregal de Santo Domingo</div>
+  </div>
+
   <div id="map"></div>
 
   <!-- Ventana Modal emergente -->
@@ -225,6 +303,14 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
+    // --- TEMPORIZADOR DE PANTALLA DE CARGA (3 SEGUNDOS) ---
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        const loader = document.getElementById('loaderScreen');
+        loader.classList.add('hidden');
+      }, 3000); // 3000 ms = 3 segundos
+    });
+
     // 1. Coordenadas de los Puntos de Interés
     const mercadoCoords = [19.331328473315608, -99.16249745266929];
     const mercadoCopilcoCoords = [19.33206414879216, -99.17026841588856];
