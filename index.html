@@ -21,7 +21,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #0d0d11; /* Fondo oscuro que combina con el marco del logo */
+      background-color: #0d0d11;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -35,30 +35,13 @@
       visibility: hidden;
     }
 
-    /* Animación CSS que simula el aullido */
     @keyframes aullido {
-      0% {
-        transform: translateY(0) rotate(0deg) scale(1);
-      }
-      20% {
-        /* Toma aire bajando un poco */
-        transform: translateY(6px) rotate(-3deg) scale(0.97);
-      }
-      45% {
-        /* Se estira e inclina hacia arriba para aullar */
-        transform: translateY(-16px) rotate(-10deg) scale(1.08);
-      }
-      60% {
-        /* Vibración/eco del aullido */
-        transform: translateY(-13px) rotate(-8deg) scale(1.08);
-      }
-      75% {
-        transform: translateY(-16px) rotate(-10deg) scale(1.08);
-      }
-      100% {
-        /* Regresa a su posición de origen */
-        transform: translateY(0) rotate(0deg) scale(1);
-      }
+      0% { transform: translateY(0) rotate(0deg) scale(1); }
+      20% { transform: translateY(6px) rotate(-3deg) scale(0.97); }
+      45% { transform: translateY(-16px) rotate(-10deg) scale(1.08); }
+      60% { transform: translateY(-13px) rotate(-8deg) scale(1.08); }
+      75% { transform: translateY(-16px) rotate(-10deg) scale(1.08); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); }
     }
 
     .coyote-animado {
@@ -95,7 +78,32 @@
       cursor: pointer;
     }
 
-    /* Estilos para la ventana modal emergente */
+    /* --- BOTÓN FLOTANTE MEMORIA DEL PEDREGAL --- */
+    .btn-flotante-galeria {
+      position: fixed;
+      bottom: 25px;
+      right: 20px;
+      z-index: 9999;
+      background: linear-gradient(135deg, #111, #333);
+      color: #FFD54F;
+      border: 2px solid #FFD54F;
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .btn-flotante-galeria:active {
+      transform: scale(0.95);
+    }
+
+    /* Estilos para las ventanas modales emergentes */
     .modal-imagen {
       display: none;
       position: fixed;
@@ -104,7 +112,7 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
+      background-color: rgba(0, 0, 0, 0.88);
       align-items: center;
       justify-content: center;
       flex-direction: column;
@@ -246,7 +254,56 @@
       font-size: 14px;
     }
 
-    /* Estilo del Popup del Cacomixtle */
+    /* --- ESTILOS DEL CARRUSEL DE FOTOS HISTÓRICAS --- */
+    .carrusel-contenedor {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .carrusel-img {
+      width: 100%;
+      max-height: 45vh;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 2px solid #FFD54F;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+      filter: grayscale(100%);
+    }
+
+    .btn-carrusel {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: #FFD54F;
+      border: 1px solid #FFD54F;
+      font-size: 22px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .btn-carrusel.prev { left: 5px; }
+    .btn-carrusel.next { right: 5px; }
+
+    .carrusel-indicador {
+      color: #FFD54F;
+      font-size: 13px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
     .cacomixtle-popup {
       text-align: center;
       font-family: sans-serif;
@@ -275,7 +332,12 @@
 
   <div id="map"></div>
 
-  <!-- Ventana Modal emergente -->
+  <!-- BOTÓN FLOTANTE GENERAL PARA EL CARRUSEL -->
+  <button id="btnAbrirGaleria" class="btn-flotante-galeria">
+    📸 Memoria del Pedregal
+  </button>
+
+  <!-- Ventana Modal emergente Puntos de Interés -->
   <div id="modalImagen" class="modal-imagen">
     <span class="modal-cerrar" id="btnCerrar">&times;</span>
     <img id="imgGrande" class="modal-contenido" src="" alt="Punto de Interés" />
@@ -298,6 +360,28 @@
     <button class="btn-ruta" id="btnTrazarRuta">Trazar ruta hacia este punto</button>
   </div>
 
+  <!-- VENTANA MODAL CARRUSEL DE FOTOS HISTÓRICAS EN BLANCO Y NEGRO -->
+  <div id="modalGaleria" class="modal-imagen">
+    <span class="modal-cerrar" id="btnCerrarGaleria">&times;</span>
+    <div class="modal-info" style="margin-top: 0; margin-bottom: 10px;">
+      <h3>🏛️ Memoria Histórica del Pedregal</h3>
+      <p style="text-align: center; font-size: 13px; color: #B0BEC5; margin-bottom: 5px;">
+        Fotografías históricas en blanco y negro de los orígenes de Santo Domingo.
+      </p>
+    </div>
+
+    <div class="carrusel-contenedor">
+      <button class="btn-carrusel prev" id="btnCarruselPrev">&#10094;</button>
+      <img id="imgCarrusel" class="carrusel-img" src="" alt="Foto Histórica Santo Domingo" />
+      <button class="btn-carrusel next" id="btnCarruselNext">&#10095;</button>
+    </div>
+
+    <div id="carruselPieFoto" class="modal-info" style="margin-top: 10px;">
+      <p id="textoPieFoto" style="text-align: center; font-weight: bold; color: #FFD54F; margin-bottom: 5px;"></p>
+    </div>
+    <div id="carruselIndicador" class="carrusel-indicador">1 / 8</div>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -307,7 +391,7 @@
       setTimeout(function() {
         const loader = document.getElementById('loaderScreen');
         loader.classList.add('hidden');
-      }, 3000); // 3000 ms = 3 segundos
+      }, 3000);
     });
 
     // 1. Coordenadas de los Puntos de Interés
@@ -315,12 +399,50 @@
     const mercadoCopilcoCoords = [19.33206414879216, -99.17026841588856];
     const parqueTepocatlCoords = [19.330606797917874, -99.16074211773814];
     const parqueAmezquiteCoords = [19.332821262974168, -99.16477662383282];
-    const santo8Coords = [19.329558139092832, -99.16802369199146]; // Colectivo Sant8 también es cultura
+    const santo8Coords = [19.329558139092832, -99.16802369199146];
 
     let destinoActual = mercadoCoords;
     let quizActual = null;
 
-    // Base de datos de trivias para cada punto
+    // --- BASE DE DATOS DEL CARRUSEL CON LAS 8 FOTOS SUBIDAS A IMGBB ---
+    const fotosHistoricas = [
+      {
+        url: "https://i.ibb.co/NdH9QQ1t/Whats-App-Image-2026-08-21-at-11-57-37-PM-1.jpg",
+        titulo: "Fundación y asentamiento popular en el Pedregal de Santo Domingo."
+      },
+      {
+        url: "https://i.ibb.co/RkGcRphz/Whats-App-Image-2026-08-21-at-11-57-37-PM-2.jpg",
+        titulo: "Construcción comunitaria sobre la roca volcánica del Xitle."
+      },
+      {
+        url: "https://i.ibb.co/HfM79n3V/Whats-App-Image-2026-08-21-at-11-57-37-PM-3.jpg",
+        titulo: "Trabajo colectivo y faenas de autogestión de los primeros vecinos."
+      },
+      {
+        url: "https://i.ibb.co/B24fRy4M/Whats-App-Image-2026-08-21-at-11-57-37-PM-4.jpg",
+        titulo: "Apertura de calles y trazo urbano entre el terreno rocoso."
+      },
+      {
+        url: "https://i.ibb.co/F4TTDfc6/Whats-App-Image-2026-08-21-at-11-57-37-PM-5.jpg",
+        titulo: "Llegada de familias y edificación de las primeras viviendas de autoconstrucción."
+      },
+      {
+        url: "https://i.ibb.co/WpxrVC0w/Whats-App-Image-2026-08-21-at-11-57-37-PM-6.jpg",
+        titulo: "Convivencia y organización vecinal en el proceso de consolidación del barrio."
+      },
+      {
+        url: "https://i.ibb.co/zWqfnQ0V/Whats-App-Image-2026-08-21-at-11-57-37-PM.jpg",
+        titulo: "Transformación del paisaje volcánico en calles y espacios comunitarios."
+      },
+      {
+        url: "https://i.ibb.co/RGX7ztkM/Whats-App-Image-2026-08-21-at-11-58-42-PM.jpg",
+        titulo: "Memoria e identidad histórica del Pedregal de Santo Domingo."
+      }
+    ];
+
+    let indiceCarrusel = 0;
+
+    // Trivias por punto
     const trivias = {
       lasRosas: {
         pregunta: "🏆 🦊 🥳 ¿En qué década se consolidó este mercado durante las ocupaciones comunitarias?",
@@ -414,7 +536,7 @@
     const parqueAmezquiteMarker = L.marker(parqueAmezquiteCoords, { icon: parqueAmezquiteIcon }).addTo(map);
     const santo8Marker = L.marker(santo8Coords, { icon: santo8Icon }).addTo(map);
 
-    // Elementos DOM del Modal
+    // Elementos DOM del Modal Puntos
     const modal = document.getElementById('modalImagen');
     const imgGrande = document.getElementById('imgGrande');
     const modalTitulo = document.getElementById('modalTitulo');
@@ -429,6 +551,16 @@
     const opcionesQuiz = document.getElementById('opcionesQuiz');
     const resultadoQuiz = document.getElementById('resultadoQuiz');
 
+    // Elementos DOM Carrusel
+    const modalGaleria = document.getElementById('modalGaleria');
+    const btnAbrirGaleria = document.getElementById('btnAbrirGaleria');
+    const btnCerrarGaleria = document.getElementById('btnCerrarGaleria');
+    const imgCarrusel = document.getElementById('imgCarrusel');
+    const textoPieFoto = document.getElementById('textoPieFoto');
+    const carruselIndicador = document.getElementById('carruselIndicador');
+    const btnCarruselPrev = document.getElementById('btnCarruselPrev');
+    const btnCarruselNext = document.getElementById('btnCarruselNext');
+
     // Función de Voz
     function hablarTexto(texto, velocidad = 1.0, tono = 1.0) {
       if ('speechSynthesis' in window) {
@@ -440,6 +572,32 @@
         window.speechSynthesis.speak(locucion);
       }
     }
+
+    // Funciones del Carrusel de Fotos
+    function mostrarFotoCarrusel(index) {
+      if (fotosHistoricas.length === 0) return;
+      if (index < 0) indiceCarrusel = fotosHistoricas.length - 1;
+      else if (index >= fotosHistoricas.length) indiceCarrusel = 0;
+      else indiceCarrusel = index;
+
+      imgCarrusel.src = fotosHistoricas[indiceCarrusel].url;
+      textoPieFoto.textContent = fotosHistoricas[indiceCarrusel].titulo;
+      carruselIndicador.textContent = `${indiceCarrusel + 1} / ${fotosHistoricas.length}`;
+    }
+
+    btnAbrirGaleria.onclick = function() {
+      mostrarFotoCarrusel(0);
+      modalGaleria.style.display = 'flex';
+      hablarTexto("Memoria histórica del Pedregal de Santo Domingo en imágenes.", 1.0, 1.1);
+    };
+
+    btnCerrarGaleria.onclick = function() {
+      modalGaleria.style.display = 'none';
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    };
+
+    btnCarruselPrev.onclick = function() { mostrarFotoCarrusel(indiceCarrusel - 1); };
+    btnCarruselNext.onclick = function() { mostrarFotoCarrusel(indiceCarrusel + 1); };
 
     // Preparar Quiz
     function cargarQuiz(datosQuiz) {
@@ -554,6 +712,13 @@
     modal.onclick = function(e) { 
       if (e.target === modal) {
         modal.style.display = 'none';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    };
+
+    modalGaleria.onclick = function(e) {
+      if (e.target === modalGaleria) {
+        modalGaleria.style.display = 'none';
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       }
     };
