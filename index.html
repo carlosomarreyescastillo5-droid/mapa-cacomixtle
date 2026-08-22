@@ -315,6 +315,7 @@
     const mercadoCopilcoCoords = [19.33206414879216, -99.17026841588856];
     const parqueTepocatlCoords = [19.330606797917874, -99.16074211773814];
     const parqueAmezquiteCoords = [19.332821262974168, -99.16477662383282];
+    const casaFelipeCoords = [19.329558139092832, -99.16802369199146]; // Nuevo Punto Agregado
 
     let destinoActual = mercadoCoords;
     let quizActual = null;
@@ -360,6 +361,16 @@
         ],
         mensajeExito: "¡Muy bien! Los parques de barrio son el corazón del encuentro y la vida comunitaria.",
         audioExito: "¡Muy bien! Los parques comunitarios fortalecen el tejido social y la convivencia del barrio."
+      },
+      casaFelipe: {
+        pregunta: "🏆 🦊 🥳 ¿Qué representan las casas históricas y puntos comunitarios dentro del Pedregal de Santo Domingo?",
+        opciones: [
+          { texto: "a) La memoria viva, autogestión y la historia de fundación del barrio", correcta: true },
+          { texto: "b) Zonas comerciales exclusivas", correcta: false },
+          { texto: "c) Espacios privados sin relevancia cultural", correcta: false }
+        ],
+        mensajeExito: "¡Muy bien! Cada espacio del barrio resguarda la historia y resistencia comunitaria de Santo Domingo.",
+        audioExito: "¡Excelente! Conociendo nuestros puntos comunitarios mantenemos viva la memoria histórica del barrio."
       }
     };
 
@@ -380,6 +391,8 @@
     const urlMercadoCopilco = 'https://i.ibb.co/m5SR4nfj/FOTO-OFICIAL.jpg';
     const urlParqueTepocatl = 'https://i.ibb.co/QjqTNFpX/PARQUE-ANIMADO.jpg';
     const urlParqueAmezquite = 'https://i.ibb.co/Pv8JGZJg/FACHADA-PARQUE-AMEZQUITE.jpg';
+    const urlCasaFelipe = 'https://i.ibb.co/673QP1GZ/CASA-DE-FELIPE-3.jpg'; // Nueva imagen modal
+    const urlLogoOficial = 'https://i.ibb.co/Cs3LN4z4/LOGO-OFICIAL.png'; // Nuevo logo oficial para marcador
     const urlCacomixtle = 'https://i.ibb.co/sJXgFkyV/CACOMIXTLE-PERSONAJE.png';
 
     // Marcadores Iconos
@@ -388,6 +401,7 @@
     const mercadoCopilcoIcon = L.icon({ iconUrl: urlMercadoCopilco, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
     const parqueTepocatlIcon = L.icon({ iconUrl: urlParqueTepocatl, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
     const parqueAmezquiteIcon = L.icon({ iconUrl: urlParqueAmezquite, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' });
+    const casaFelipeIcon = L.icon({ iconUrl: urlLogoOficial, iconSize: [60, 60], iconAnchor: [30, 30], popupAnchor: [0, -30], className: 'custom-icon' }); // Nuevo Icono
 
     // Capas
     let lineaRuta = null;
@@ -398,6 +412,7 @@
     const mercadoCopilcoMarker = L.marker(mercadoCopilcoCoords, { icon: mercadoCopilcoIcon }).addTo(map);
     const parqueTepocatlMarker = L.marker(parqueTepocatlCoords, { icon: parqueTepocatlIcon }).addTo(map);
     const parqueAmezquiteMarker = L.marker(parqueAmezquiteCoords, { icon: parqueAmezquiteIcon }).addTo(map);
+    const casaFelipeMarker = L.marker(casaFelipeCoords, { icon: casaFelipeIcon }).addTo(map); // Nuevo Marcador en Mapa
 
     // Elementos DOM del Modal
     const modal = document.getElementById('modalImagen');
@@ -515,6 +530,20 @@
       cargarQuiz(trivias.amezquite);
       modal.style.display = 'flex';
       hablarTexto("Parque Amézquite se encuentra dentro del Pedregal de Santo Domingo y forma parte de los territorios de paz. ¡Te esperamos los martes por las tardes!", 1.0, 1.1);
+    });
+
+    // Clic Nuevo Punto (Casa de Felipe / Punto Cultural)
+    casaFelipeMarker.on('click', function () {
+      imgGrande.src = urlCasaFelipe;
+      modalTitulo.textContent = 'Punto Cultural Santo Domingo';
+      burbujaPregon.style.display = 'none';
+      textoDescripcion.innerHTML = 'Bienvenidos a este espacio cultural del Pedregal de Santo Domingo 🏡, un punto donde fortalecemos la memoria histórica, el arte urbano y la convivencia comunitaria. Forma parte del recorrido territorial que promueve la paz, el juego tradicional y la preservación de nuestras raíces volcánicas 🌋💖.';
+      linkVideo.style.display = 'none'; // Oculto hasta asignar enlace de video específico
+      destinoActual = casaFelipeCoords;
+      
+      cargarQuiz(trivias.casaFelipe);
+      modal.style.display = 'flex';
+      hablarTexto("¡Bienvenidos a este nuevo punto cultural en la ruta del Pedregal de Santo Domingo!", 1.0, 1.1);
     });
 
     btnCerrar.onclick = function() { 
