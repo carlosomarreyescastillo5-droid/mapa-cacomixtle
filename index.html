@@ -507,13 +507,14 @@
       imgGrande.src = urlParqueAmezquite;
       modalTitulo.textContent = 'Parque Amézquite';
       burbujaPregon.style.display = 'none';
-      textoDescripcion.innerHTML = 'En el parque amezquite 🌳 puedes encontrar a los promotores culturales de coyoacan con actividades culturales y artísticas 🖼️ como animación digital 🎮, juegos tradicionales y de destreza 🎲♟️, pintura 🎨, títeres, dibujos 🖌️🖍️ y mucho más. Este territorio se trabaja para crear comunidad con las y los vecinos del parque y sus alrededores escuchando sus peticiones culturales, promoviendo la cultura de la colonia por medio de su historia creando identidad con el lugar. 👨🏻‍💼👩🏻‍💼👵🏼👶🏻💖';
-      linkVideo.style.display = 'none'; // Oculto hasta tener enlace de video
+      textoDescripcion.innerHTML = 'Parque amezquite 🌳 se encuentra dentro del pedregal de santo domingo y forma parte de los territorios de paz 🕊️ de toda la ciudad de mexico. Se encuentra en esta ruta cultural 🗺️ y puedes encontrarnos los martes por las tardes realizando diferentes actividades culturales y artísticas como: realidad virtual 🥽, reciclado 🍼, pintura 🖌️ , manualidades ✂️🧴. Asi que recuerda “tarde de martes, tarde de actividades culturales” 👧🏻👦🏻💖.';
+      linkVideo.href = 'https://drive.google.com/file/d/17yDWhKmOfUT15nmuhMoBgzrYu2qec3ZS/view?usp=sharing';
+      linkVideo.style.display = 'inline-block';
       destinoActual = parqueAmezquiteCoords;
       
       cargarQuiz(trivias.amezquite);
       modal.style.display = 'flex';
-      hablarTexto("En el parque Amézquite puedes encontrar a los promotores culturales de Coyoacán con actividades artísticas y culturales para crear comunidad.", 1.0, 1.1);
+      hablarTexto("Parque Amézquite se encuentra dentro del Pedregal de Santo Domingo y forma parte de los territorios de paz. ¡Te esperamos los martes por las tardes!", 1.0, 1.1);
     });
 
     btnCerrar.onclick = function() { 
