@@ -606,13 +606,13 @@
         audioExito: "¡Exacto! Escuchar la voz de las y los vecinos fundadores mantiene viva la historia colectiva de nuestro Pedregal."
       },
       casaTresR: {
-        pregunta: "🏆 🦊 🥳 ¿Cuáles son los tres ejes principales de la Casa de las 3R's del Cuidado?",
+        pregunta: "🏆 🦊 🥳 ¿Cuáles son los tres ejes principales de la Casa de las 3 R´s del Cuidado?",
         opciones: [
           { texto: "a) Reconocer, Reducir y Redistribuir el trabajo de cuidados", correcta: true },
           { texto: "b) Reciclar, Reutilizar y Reducir basura", correcta: false },
           { texto: "c) Reparar, Remodelar y Restaurar edificios", correcta: false }
         ],
-        mensajeExito: "¡Excelente! La Casa de las 3R's busca Reconocer, Reducir y Redistribuir el trabajo de cuidados en la comunidad.",
+        mensajeExito: "¡Excelente! La Casa de las 3 R´s busca Reconocer, Reducir y Redistribuir el trabajo de cuidados en la comunidad.",
         audioExito: "¡Excelente! La Casa de las tres erres busca reconocer, reducir y redistribuir el trabajo de cuidados de las mujeres."
       },
       audioDonVictor: {
@@ -1020,12 +1020,12 @@
       hablarTexto("Escucha este relato de la memoria viva registrado justo en esta calle.", 1.0, 1.1);
     });
 
-    // Clic La Casa de las 3R's
+    // Clic La Casa de las 3 R´s
     casaTresRMarker.on('click', function () {
       contenedorAudioDrive.style.display = 'none';
       iframeAudio.src = "";
       imgGrande.src = urlCasaTresR;
-      modalTitulo.textContent = "🏠 LA CASA DE LAS 3R´S DE CUÍDAME";
+      modalTitulo.textContent = "La casa de las 3 R´s";
       burbujaPregon.style.display = 'none';
       textoDescripcion.innerHTML = 'La misión de la Casa de las 3R’s del Cuidado “Pioneras de la Transformación” 👩🏻‍🤝‍👩🏼 en Pedregal de Santo Domingo, Coyoacán, es Reconocer 🏅, Reducir ✂️⬇️ y Redistribuir 🤲📊 el trabajo de cuidados que históricamente ha recaído de manera injusta en las mujeres 👩🏻‍🤝‍👩🏼.<br><br>• <b>🏅 Reconocer:</b> Valorar el esfuerzo y la importancia del trabajo 💼 de cuidados para la sociedad.<br>• <b>⬇️ Reducir:</b> Disminuir la carga de trabajo físico y el tiempo ⏰ dedicado a las labores domésticas 🧹 y de cuidados mediante servicios comunitarios gratuitos.<br>• <b>🔄 Redistribuir:</b> Convertir el cuidado en una responsabilidad colectiva entre el Estado, la sociedad y las familias, aliviando el aislamiento de quienes cuidan 👨‍👩‍👧‍👦💜🎗️👩🏻.';
       linkVideo.href = 'https://drive.google.com/file/d/1ixpCPaoY8Av_4vNbLLHvnNlvvUIwgDL_/view?usp=sharing';
